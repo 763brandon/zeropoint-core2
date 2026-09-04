@@ -9,9 +9,10 @@
   "scripts": {
     "factory": "node framework/factory/cli.mjs",
     "test": "npm run test:framework && npm run test:app",
-    "test:framework": "node --test 'framework/tests/**/*.test.mjs'",
-    "test:app": "node --test 'apps/avatar-commerce/tests/**/*.test.mjs'",
-    "start": "node apps/avatar-commerce/server.mjs",
-    "seed": "node apps/avatar-commerce/seed/seed.mjs"
+    "test:framework": "node --test --disable-warning=ExperimentalWarning 'framework/tests/**/*.test.mjs'",
+    "test:app": "node --test --disable-warning=ExperimentalWarning 'apps/avatar-commerce/tests/**/*.test.mjs'",
+    "start": "node --disable-warning=ExperimentalWarning apps/avatar-commerce/server.mjs",
+    "seed": "node --disable-warning=ExperimentalWarning apps/avatar-commerce/seed/seed.mjs",
+    "demo": "node --disable-warning=ExperimentalWarning apps/avatar-commerce/seed/demo.mjs"
   }
 }

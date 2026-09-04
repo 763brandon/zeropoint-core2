@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Avatar Commerce</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23131118'/%3E%3Ccircle cx='16' cy='10' r='5' fill='%23f0a500'/%3E%3Cpath d='M7 30c0-6 4-10 9-10s9 4 9 10z' fill='%23f0a500'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- Public share view: rendered for strangers, no account, no login wall. -->
+<main id="share-view" hidden>
+  <header class="share-head">
+    <a class="brand" href="/">AI-Avatar<span>Commerce</span></a>
+  </header>
+  <section class="share-card">
+    <div class="share-render"><img id="share-img" alt="" width="300" height="520"></div>
+    <div class="share-meta">
+      <p class="eyebrow">A look by <strong id="share-owner"></strong></p>
+      <h1 id="share-caption">Loading…</h1>
+      <ul id="share-garments" class="garment-list"></ul>
+      <p class="disclosure" id="share-disclosure"></p>
+      <div class="cta">
+        <h2>Try this on your own avatar</h2>
+        <form id="share-signup" class="inline-form">
+          <input name="handle" placeholder="pick a handle" autocomplete="off" required>
+          <button type="submit">Create my avatar</button>
+        </form>
+        <p class="form-error" id="share-error" role="alert"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- The application shell. -->
+<div id="app" hidden>
+  <header class="topbar">
+    <a class="brand" href="/">AI-Avatar<span>Commerce</span></a>
+    <nav class="tabs" id="tabs">
+      <button data-tab="studio" class="active">Studio</button>
+      <button data-tab="boutique">Boutique</button>
+      <button data-tab="looks">Looks</button>
+      <button data-tab="earnings">Earnings</button>
+      <button data-tab="growth">Growth</button>
+    </nav>
+    <div class="who" id="who"></div>
+  </header>
+
+  <!-- Signup gate -->
+  <section id="gate" class="panel centered">
+    <h1>Create your avatar</h1>
+    <p class="lede">Dress it in real stock from local boutiques, share the look, earn a commission when someone buys.</p>
+    <form id="signup" class="inline-form">
+      <input name="handle" placeholder="handle (a-z, 0-9, _)" autocomplete="off" required>
+      <button type="submit">Start</button>
+    </form>
+    <p class="form-error" id="signup-error" role="alert"></p>
+  </section>
+
+  <!-- Studio -->
+  <section id="tab-studio" class="panel two-col" hidden>
+    <div class="stage">
+      <div id="studio-render" class="render-frame"></div>
+      <p class="caption-sm">Illustrative render — not a photograph of the product.</p>
+    </div>
+    <form id="avatar-form" class="controls">
+      <h2>Your avatar</h2>
+      <label>Name <input name="name" value="My avatar" maxlength="40" required></label>
+
+      <fieldset>
+        <legend>Skin tone</legend>
+        <div class="swatches" id="skin-swatches"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Hair</legend>
+        <div class="chips" id="hair-chips"></div>
+        <label class="color-row">Colour <input type="color" name="hairColor" value="#2b1d16"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Proportions</legend>
+        <p class="hint">You set these. Nothing here is adjusted toward a norm.</p>
+        <label>Height <span class="val" data-for="heightCm"></span><input type="range" name="heightCm" min="140" max="210" value="168"></label>
+        <label>Shoulders <span class="val" data-for="shoulderW"></span><input type="range" name="shoulderW" min="60" max="118" value="88"></label>
+        <label>Waist <span class="val" data-for="waistW"></span><input type="range" name="waistW" min="44" max="108" value="66"></label>
+        <label>Hips <span class="val" data-for="hipW"></span><input type="range" name="hipW" min="62" max="122" value="96"></label>
+      </fieldset>
+
+      <button type="submit" class="primary">Save avatar</button>
+      <p class="form-error" id="avatar-error" role="alert"></p>
+      <div id="avatar-list" class="avatar-list"></div>
+    </form>
+  </section>
+
+  <!-- Boutique -->
+  <section id="tab-boutique" class="panel two-col" hidden>
+    <div class="stage">
+      <div id="tryon-render" class="render-frame"></div>
+      <p class="caption-sm">Illustrative render — not a photograph of the product.</p>
+      <div id="tryon-summary" class="summary"></div>
+      <form id="look-form" class="inline-form">
+        <input name="caption" placeholder="say something about the look" maxlength="140">
+        <button type="submit" class="primary">Save &amp; share</button>
+      </form>
+      <p class="form-error" id="look-error" role="alert"></p>
+    </div>
+    <div class="controls">
+      <h2>Local boutiques</h2>
+      <p class="hint">One garment per layer. A dress replaces a top and a bottom.</p>
+      <div id="rail"></div>
+    </div>
+  </section>
+
+  <!-- Looks -->
+  <section id="tab-looks" class="panel" hidden>
+    <h2>Your looks</h2>
+    <div id="looks-grid" class="grid"></div>
+  </section>
+
+  <!-- Earnings -->
+  <section id="tab-earnings" class="panel" hidden>
+    <h2>Earnings</h2>
+    <div id="earnings-totals" class="stat-row"></div>
+    <table class="ledger">
+      <thead><tr><th>Boutique</th><th>Order</th><th class="num">Commission</th><th class="num">Your share</th><th>Status</th></tr></thead>
+      <tbody id="earnings-rows"></tbody>
+    </table>
+    <p class="disclosure">Commissions are paid by the boutique on attributed sales within the disclosed attribution window.</p>
+  </section>
+
+  <!-- Growth -->
+  <section id="tab-growth" class="panel" hidden>
+    <h2>Loop health</h2>
+    <p class="lede">The six framework events, read straight from the event log. K is never stored — it is always recomputed from its two factors.</p>
+    <div id="growth-stats" class="stat-row"></div>
+    <div id="growth-formula" class="formula"></div>
+    <div id="growth-counts" class="counts"></div>
+  </section>
+</div>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>
