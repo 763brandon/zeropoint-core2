@@ -1,0 +1,18 @@
+{
+  "name": "zeropoint-viral-app-factory",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Viral App Factory Framework and the apps it produces.",
+  "type": "module",
+  "engines": { "node": ">=22.5.0" },
+  "bin": { "factory": "./framework/factory/cli.mjs" },
+  "scripts": {
+    "factory": "node framework/factory/cli.mjs",
+    "test": "npm run test:framework && npm run test:app",
+    "test:framework": "node --test --disable-warning=ExperimentalWarning 'framework/tests/**/*.test.mjs'",
+    "test:app": "node --test --disable-warning=ExperimentalWarning 'apps/avatar-commerce/tests/**/*.test.mjs'",
+    "start": "node --disable-warning=ExperimentalWarning apps/avatar-commerce/server.mjs",
+    "seed": "node --disable-warning=ExperimentalWarning apps/avatar-commerce/seed/seed.mjs",
+    "demo": "node --disable-warning=ExperimentalWarning apps/avatar-commerce/seed/demo.mjs"
+  }
+}

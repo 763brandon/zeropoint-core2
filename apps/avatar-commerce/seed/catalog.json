@@ -1,0 +1,221 @@
+{
+  "note": "Launch-city supply for the closed-loop test. Framework playbook phase 0 targets 15-25 boutiques; this seed carries 6 for local development. Commission rates and payout terms are illustrative. Prices are integer minor units for the garment's currency; VND and COP are zero-decimal (see src/lib/money.mjs).",
+  "boutiques": [
+    {
+      "id": "btq_adwoa",
+      "name": "Adwoa Studio",
+      "city": "Accra",
+      "country": "GH",
+      "currency": "GHS",
+      "rate_bps": 1200,
+      "sharer_bps": 6000,
+      "payout_terms": "Net 30, minimum GHS 50"
+    },
+    {
+      "id": "btq_serrano",
+      "name": "Serrano Atelier",
+      "city": "Bogotá",
+      "country": "CO",
+      "currency": "COP",
+      "rate_bps": 900,
+      "sharer_bps": 6500,
+      "payout_terms": "Net 45"
+    },
+    {
+      "id": "btq_lumen",
+      "name": "Lumen Wardrobe",
+      "city": "Warsaw",
+      "country": "PL",
+      "currency": "PLN",
+      "rate_bps": 1000,
+      "sharer_bps": 5500,
+      "payout_terms": "Net 30"
+    },
+    {
+      "id": "btq_hanoi",
+      "name": "Cửa Hàng Mộc",
+      "city": "Hanoi",
+      "country": "VN",
+      "currency": "VND",
+      "rate_bps": 1400,
+      "sharer_bps": 7000,
+      "payout_terms": "Net 14"
+    },
+    {
+      "id": "btq_mira",
+      "name": "Mira Threadworks",
+      "city": "Accra",
+      "country": "GH",
+      "currency": "GHS",
+      "rate_bps": 1500,
+      "sharer_bps": 6000,
+      "payout_terms": "Net 30"
+    },
+    {
+      "id": "btq_kolo",
+      "name": "Kolo Collective",
+      "city": "Bogotá",
+      "country": "CO",
+      "currency": "COP",
+      "rate_bps": 800,
+      "sharer_bps": 5000,
+      "payout_terms": "Net 60"
+    }
+  ],
+  "garments": [
+    {
+      "id": "gar_kente_wrap",
+      "boutique_id": "btq_adwoa",
+      "name": "Kente Wrap Top",
+      "slot": "top",
+      "price_minor": 24000,
+      "currency": "GHS",
+      "color": "#c94f3d",
+      "accent": "#f2c14e",
+      "pattern": "stripe"
+    },
+    {
+      "id": "gar_adinkra_tee",
+      "boutique_id": "btq_adwoa",
+      "name": "Adinkra Print Tee",
+      "slot": "top",
+      "price_minor": 13500,
+      "currency": "GHS",
+      "color": "#1f2933",
+      "accent": "#d9c8a9",
+      "pattern": "dot"
+    },
+    {
+      "id": "gar_kaba_dress",
+      "boutique_id": "btq_adwoa",
+      "name": "Kaba Midi Dress",
+      "slot": "dress",
+      "price_minor": 42000,
+      "currency": "GHS",
+      "color": "#7b2d8b",
+      "accent": "#f0a500",
+      "pattern": "check"
+    },
+    {
+      "id": "gar_batik_skirt",
+      "boutique_id": "btq_mira",
+      "name": "Batik Wrap Skirt",
+      "slot": "bottom",
+      "price_minor": 19500,
+      "currency": "GHS",
+      "color": "#1f3a5f",
+      "accent": "#6f8fb5",
+      "pattern": "weave"
+    },
+    {
+      "id": "gar_linen_trouser",
+      "boutique_id": "btq_mira",
+      "name": "Wide Linen Trouser",
+      "slot": "bottom",
+      "price_minor": 27000,
+      "currency": "GHS",
+      "color": "#2f4f4f",
+      "accent": "#5d8a8a",
+      "pattern": "solid"
+    },
+    {
+      "id": "gar_ruana",
+      "boutique_id": "btq_serrano",
+      "name": "Wool Ruana",
+      "slot": "outer",
+      "price_minor": 320000,
+      "currency": "COP",
+      "color": "#8a5a2b",
+      "accent": "#b98247",
+      "pattern": "check"
+    },
+    {
+      "id": "gar_bogota_blouse",
+      "boutique_id": "btq_serrano",
+      "name": "Bordado Blouse",
+      "slot": "top",
+      "price_minor": 180000,
+      "currency": "COP",
+      "color": "#e8e3d9",
+      "accent": "#c14953",
+      "pattern": "dot"
+    },
+    {
+      "id": "gar_andes_dress",
+      "boutique_id": "btq_kolo",
+      "name": "Andes Column Dress",
+      "slot": "dress",
+      "price_minor": 410000,
+      "currency": "COP",
+      "color": "#31473a",
+      "accent": "#a8c256",
+      "pattern": "solid"
+    },
+    {
+      "id": "gar_kolo_trouser",
+      "boutique_id": "btq_kolo",
+      "name": "Pleated Wide Trouser",
+      "slot": "bottom",
+      "price_minor": 225000,
+      "currency": "COP",
+      "color": "#3d3b40",
+      "accent": "#7a7580",
+      "pattern": "stripe"
+    },
+    {
+      "id": "gar_wool_coat",
+      "boutique_id": "btq_lumen",
+      "name": "Oversized Wool Coat",
+      "slot": "outer",
+      "price_minor": 89900,
+      "currency": "PLN",
+      "color": "#4a4238",
+      "accent": "#8c7a63",
+      "pattern": "weave"
+    },
+    {
+      "id": "gar_lumen_knit",
+      "boutique_id": "btq_lumen",
+      "name": "Merino Rib Knit",
+      "slot": "top",
+      "price_minor": 32900,
+      "currency": "PLN",
+      "color": "#9c3d54",
+      "accent": "#d98fa0",
+      "pattern": "solid"
+    },
+    {
+      "id": "gar_ao_dai",
+      "boutique_id": "btq_hanoi",
+      "name": "Modern Áo Dài",
+      "slot": "dress",
+      "price_minor": 1850000,
+      "currency": "VND",
+      "color": "#0f5257",
+      "accent": "#f4d35e",
+      "pattern": "solid"
+    },
+    {
+      "id": "gar_silk_top",
+      "boutique_id": "btq_hanoi",
+      "name": "Mulberry Silk Top",
+      "slot": "top",
+      "price_minor": 950000,
+      "currency": "VND",
+      "color": "#c9a227",
+      "accent": "#f2e2b1",
+      "pattern": "weave"
+    },
+    {
+      "id": "gar_hanoi_trouser",
+      "boutique_id": "btq_hanoi",
+      "name": "Raw Silk Trouser",
+      "slot": "bottom",
+      "price_minor": 1100000,
+      "currency": "VND",
+      "color": "#2b2d42",
+      "accent": "#8d99ae",
+      "pattern": "solid"
+    }
+  ]
+}
