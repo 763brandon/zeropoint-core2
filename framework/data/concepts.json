@@ -1,0 +1,84 @@
+{
+  "scanId": "scan-2026-001",
+  "rubric": "VIRAL-M v1",
+  "concepts": [
+    {
+      "id": "A",
+      "name": "Reserved — Africa concept A",
+      "regionId": "africa",
+      "status": "reserved",
+      "note": "Not captured in the supplied planning excerpt. Intentionally unscored; the factory refuses to score a concept it has no premise for."
+    },
+    {
+      "id": "B",
+      "name": "Reserved — Africa concept B",
+      "regionId": "africa",
+      "status": "reserved",
+      "note": "Not captured in the supplied planning excerpt."
+    },
+    {
+      "id": "C",
+      "name": "AI-Avatar Commerce",
+      "regionId": "outside-africa",
+      "status": "scored",
+      "premise": "Users create AI avatars that try on clothes from local boutiques and share looks, earning affiliate commissions.",
+      "wedge": "Local boutiques with real inventory but no content engine. The avatar is the content engine.",
+      "primaryLoop": "create avatar -> try on garment -> share look -> viewer clicks garment -> viewer signs up to try it on their own avatar -> shares",
+      "monetization": "Affiliate commission on attributed boutique sales, split between the sharer and the platform.",
+      "scores": {
+        "velocity": 5,
+        "shareability": 5,
+        "retention": 3,
+        "acquisition": 4,
+        "liquidity": 3,
+        "monetization": 4
+      },
+      "rationale": {
+        "velocity": "Two independent rising waves — short-video commerce and generative media — intersect here rather than one carrying the concept alone.",
+        "shareability": "The shared artefact is the product. A look has no value held privately, so sharing is the primary action, not an afterthought bolted onto retention.",
+        "retention": "Fashion novelty decays fast. Return visits depend on a supply of new drops, which is a partner-operations problem, not a product problem. Scored honestly at 3.",
+        "acquisition": "Each shared look is a landing page with intrinsic interest; organic reach is credible but depends on off-platform distribution the app does not control.",
+        "liquidity": "Two-sided cold start. Boutique supply must be seeded manually per city; this is the single hardest constraint.",
+        "monetization": "Affiliate mechanics are well understood and attribution is solvable, but the take rate is set by boutiques and is thin on low-ticket apparel."
+      },
+      "risks": [
+        {"risk": "Boutique supply cold start", "severity": "high", "mitigation": "Launch one city, 15-25 boutiques, manual onboarding. Treat supply as an operations gate (G2), not a growth assumption."},
+        {"risk": "Likeness and body-image harm", "severity": "high", "mitigation": "Avatars are stylised and user-parameterised, never uploaded-face derivatives by default. No automatic body 'idealisation'. Explicit consent before any likeness feature."},
+        {"risk": "Garment misrepresentation", "severity": "medium", "mitigation": "Renders are labelled as illustrative try-on, not photographic. Real product imagery shown alongside."},
+        {"risk": "Affiliate attribution disputes", "severity": "medium", "mitigation": "Signed order webhooks, bounded attribution window, immutable commission ledger, self-referral guard."},
+        {"risk": "Consumer-protection and advertising disclosure", "severity": "medium", "mitigation": "Shared looks carry a persistent paid-affiliate disclosure; commissions disclosed at point of click."}
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Micro-Gig Social Network",
+      "regionId": "outside-africa",
+      "status": "scored",
+      "premise": "A Snapchat-style app where neighbours post quick tasks (e.g. 'fix my tap for $5') and pay via an integrated wallet.",
+      "wedge": "Sub-$20 neighbourhood tasks that formal marketplaces cannot serve because their take rate exceeds the job's margin.",
+      "primaryLoop": "post task -> neighbour completes -> payment in wallet -> completer posts own task -> invites neighbours for density",
+      "monetization": "Wallet float, instant-payout fee, and optional promoted tasks.",
+      "scores": {
+        "velocity": 4,
+        "shareability": 2,
+        "retention": 4,
+        "acquisition": 3,
+        "liquidity": 2,
+        "monetization": 3
+      },
+      "rationale": {
+        "velocity": "Gig side hustles are a durable trend rather than a spiking one; durable is good for a business, weaker for a viral wedge.",
+        "shareability": "A completed tap repair is not a shareable artefact. Sharing must be manufactured through incentives, which is expensive and fragile.",
+        "retention": "Genuine recurring need — household tasks recur weekly without prompting.",
+        "acquisition": "Referral works only within a radius; national reach has no compounding value, so acquisition must be re-won city by city.",
+        "liquidity": "Hyperlocal double cold start per neighbourhood, the most punishing liquidity shape in marketplaces.",
+        "monetization": "Wallet economics require money-transmission licensing, which is a regulatory cost centre before it is a revenue line."
+      },
+      "risks": [
+        {"risk": "Money-transmission licensing", "severity": "high", "mitigation": "Partner with a licensed PSP; do not custody funds directly at MVP."},
+        {"risk": "Physical safety of in-person tasks", "severity": "high", "mitigation": "Identity verification, in-app record of engagement, ratings, and an incident channel before launch."},
+        {"risk": "Hyperlocal liquidity", "severity": "high", "mitigation": "Single-neighbourhood launch with a seeded supply of vetted completers."}
+      ]
+    }
+  ]
+}

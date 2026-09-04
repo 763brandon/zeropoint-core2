@@ -1,0 +1,59 @@
+{
+  "$schema": "./schema/signals.schema.json",
+  "scanId": "scan-2026-001",
+  "capturedAt": "2026-09-04",
+  "source": "Framework Planning Start — regional signal scan",
+  "regions": [
+    {
+      "id": "africa",
+      "label": "Africa",
+      "status": "reserved",
+      "note": "Section 1 of the source scan was not captured in the supplied planning excerpt. Left deliberately empty rather than inferred — run `factory scan --region africa` to populate.",
+      "culturalObsessions": [],
+      "techShifts": [],
+      "conceptIds": ["A", "B"]
+    },
+    {
+      "id": "outside-africa",
+      "label": "Outside Africa (Asia, Latin America, Eastern Europe)",
+      "status": "captured",
+      "culturalObsessions": [
+        "Short-video e-commerce (China's Douyin)",
+        "Gaming communities",
+        "Faith-based social networks",
+        "Gig-economy side hustles"
+      ],
+      "techShifts": [
+        "AI-generated content",
+        "AR filters",
+        "Low-code app builders"
+      ],
+      "conceptIds": ["C", "D"]
+    },
+    {
+      "id": "global",
+      "label": "Global",
+      "status": "reserved",
+      "note": "Section 3 of the source scan was below the fold in the supplied excerpt.",
+      "culturalObsessions": [],
+      "techShifts": [],
+      "conceptIds": []
+    }
+  ],
+  "convergences": [
+    {
+      "id": "conv-avatar-commerce",
+      "thesis": "Short-video e-commerce has trained a generation to buy from a person, not a page. AI-generated content plus AR filters collapse the cost of producing that person to near zero, while local boutiques remain unable to produce it at all.",
+      "culturalObsessions": ["Short-video e-commerce (China's Douyin)", "Gig-economy side hustles"],
+      "techShifts": ["AI-generated content", "AR filters"],
+      "unlocks": ["C"]
+    },
+    {
+      "id": "conv-micro-gig",
+      "thesis": "Gig-economy side hustles have outgrown formal marketplaces at the neighbourhood tier, where trust is proximity-based and ticket sizes are too small to survive marketplace take rates.",
+      "culturalObsessions": ["Gig-economy side hustles", "Faith-based social networks"],
+      "techShifts": ["Low-code app builders"],
+      "unlocks": ["D"]
+    }
+  ]
+}
