@@ -33,6 +33,13 @@ async function api(path, { method = 'GET', body } = {}) {
 
 const state = { config: null, avatars: [], avatar: null, garments: [], selection: new Map() };
 
+const companionStore = {
+  get disabled() { return localStorage.getItem('styleCompanionDisabled') === '1'; },
+  set disabled(value) { localStorage.setItem('styleCompanionDisabled', value ? '1' : '0'); },
+  get proactive() { return localStorage.getItem('styleCompanionProactive') === '1'; },
+  set proactive(value) { localStorage.setItem('styleCompanionProactive', value ? '1' : '0'); }
+};
+
 // ------------------------------------------------------------- share view
 
 async function bootShareView(slug) {
@@ -91,6 +98,7 @@ async function bootShareView(slug) {
 async function bootApp() {
   $('#app').hidden = false;
   state.config = await api('/api/config');
+  initCompanion();
 
   $('#signup').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -113,6 +121,68 @@ async function bootApp() {
   if (store.userId) {
     try { await enterApp(); } catch { store.userId = null; }
   }
+}
+
+// ------------------------------------------------------- style companion
+
+/**
+ * Milo is a persistent *in-app* style copilot, not an operating-system agent.
+ * Browser code cannot and should not control other applications. Every action
+ * below is a reversible navigation action; commerce, sharing, and checkout
+ * continue to require their existing explicit user interactions.
+ */
+function initCompanion() {
+  const shell = $('#style-companion');
+  if (companionStore.disabled) return;
+  shell.hidden = false;
+
+  const orb = $('#companion-orb');
+  const card = $('#companion-card');
+  const message = $('#companion-message');
+  const proactive = $('#companion-proactive');
+  proactive.checked = companionStore.proactive;
+
+  const setOpen = (open) => {
+    card.hidden = !open;
+    orb.setAttribute('aria-expanded', String(open));
+  };
+  let suppressOrbClick = false;
+  orb.addEventListener('click', () => {
+    if (suppressOrbClick) { suppressOrbClick = false; return; }
+    setOpen(card.hidden);
+  });
+  $('#companion-close').addEventListener('click', () => setOpen(false));
+  $('[data-companion-action="boutique"]').addEventListener('click', () => {
+    setOpen(false); showTab('boutique');
+    message.textContent = 'Pick one piece first. I’ll help you keep the layers balanced.';
+  });
+  $('[data-companion-action="studio"]').addEventListener('click', () => {
+    setOpen(false); showTab('studio');
+    message.textContent = 'Your controls change only your avatar—nothing is adjusted behind your back.';
+  });
+  proactive.addEventListener('change', () => { companionStore.proactive = proactive.checked; });
+  $('#companion-disable').addEventListener('click', () => {
+    companionStore.disabled = true;
+    shell.hidden = true;
+  });
+
+  let drag = null;
+  orb.addEventListener('pointerdown', (event) => {
+    drag = { x: event.clientX, y: event.clientY, left: shell.offsetLeft, top: shell.offsetTop, moved: false };
+    orb.setPointerCapture(event.pointerId);
+  });
+  orb.addEventListener('pointermove', (event) => {
+    if (!drag) return;
+    const left = Math.min(innerWidth - shell.offsetWidth - 8, Math.max(8, drag.left + event.clientX - drag.x));
+    const top = Math.min(innerHeight - shell.offsetHeight - 8, Math.max(8, drag.top + event.clientY - drag.y));
+    if (Math.abs(event.clientX - drag.x) + Math.abs(event.clientY - drag.y) > 5) drag.moved = true;
+    shell.style.left = `${left}px`; shell.style.top = `${top}px`; shell.style.right = 'auto'; shell.style.bottom = 'auto';
+  });
+  orb.addEventListener('pointerup', (event) => {
+    if (!drag) return;
+    if (drag.moved) { event.preventDefault(); suppressOrbClick = true; }
+    drag = null;
+  });
 }
 
 async function enterApp() {
@@ -138,6 +208,16 @@ function showTab(name) {
     $(`#tab-${section}`).hidden = section !== name || !store.userId;
   }
   if (!store.userId) return;
+  if (companionStore.proactive && $('#companion-message')) {
+    const tips = {
+      studio: 'Set the proportions that feel right to you—Milo never changes them.',
+      boutique: 'Start with one hero piece, then layer around it.',
+      looks: 'A clear caption gives your shared look more personality.',
+      earnings: 'Only attributed boutique sales create a pending commission.',
+      growth: 'K reads best alongside reach and activation, not by itself.'
+    };
+    $('#companion-message').textContent = tips[name];
+  }
   if (name === 'boutique') renderTryOn();
   if (name === 'looks') loadLooks();
   if (name === 'earnings') loadEarnings();
@@ -214,10 +294,10 @@ function applyAvatarToForm(avatar) {
 }
 
 /**
- * The studio preview is drawn locally from a saved look when one exists, and
- * otherwise falls back to a silhouette placeholder. Rendering is a server
- * responsibility, so an unsaved avatar has no render endpoint to call — the
- * placeholder makes that state explicit rather than showing a stale figure.
+ * The studio preview is intentionally local: an unsaved avatar cannot be sent
+ * to the try-on endpoint, and showing the previously saved avatar while the
+ * controls change is more misleading than useful. Keep it visually aligned
+ * with the server compositor so the first impression is not a wireframe.
  */
 function renderStudio() {
   $('#studio-render').innerHTML = placeholderFigure(readAvatarForm());
@@ -226,19 +306,27 @@ function renderStudio() {
 function placeholderFigure(a) {
   const tone = state.config.skinTones[a.skinTone];
   const scale = a.heightCm / 170;
-  return `<svg viewBox="0 0 300 520" width="300" height="520" role="img" aria-label="Avatar preview">
-    <rect width="300" height="520" fill="#1c1a24"/>
-    <ellipse cx="150" cy="${Math.round(14 + (470 - 14) * scale) + 12}" rx="${Math.round(a.hipW * 0.72)}" ry="9" fill="rgba(0,0,0,.35)"/>
-    <circle cx="150" cy="${Math.round(14 + (66 - 14) * scale)}" r="26" fill="${tone}"/>
-    <path d="M ${150 - a.shoulderW / 2} ${Math.round(14 + (96 - 14) * scale)}
-             L ${150 - a.waistW / 2} ${Math.round(14 + (210 - 14) * scale)}
-             L ${150 - a.hipW / 2} ${Math.round(14 + (262 - 14) * scale)}
-             L ${150 + a.hipW / 2} ${Math.round(14 + (262 - 14) * scale)}
-             L ${150 + a.waistW / 2} ${Math.round(14 + (210 - 14) * scale)}
-             L ${150 + a.shoulderW / 2} ${Math.round(14 + (96 - 14) * scale)} Z" fill="${tone}"/>
-    <rect x="126" y="${Math.round(14 + (262 - 14) * scale)}" width="20" height="${Math.round((470 - 262) * scale)}" fill="${tone}"/>
-    <rect x="154" y="${Math.round(14 + (262 - 14) * scale)}" width="20" height="${Math.round((470 - 262) * scale)}" fill="${tone}"/>
-    <text x="150" y="500" text-anchor="middle" fill="#a49fb4" font-size="11" font-family="sans-serif">preview — try garments on in Boutique</text>
+  const y = (n) => Math.round(14 + (n - 14) * scale);
+  const headY = y(40);
+  const shoulderY = y(96);
+  const waistY = y(210);
+  const hipY = y(262);
+  const ankleY = y(470);
+  const leftShoulder = 150 - a.shoulderW / 2;
+  const rightShoulder = 150 + a.shoulderW / 2;
+  const hair = escapeHtml(a.hairColor);
+  return `<svg viewBox="0 0 300 520" width="300" height="520" role="img" aria-label="Avatar studio preview">
+    <defs><linearGradient id="studio-bg" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#fff4e6"/><stop offset=".55" stop-color="#f5d5bd"/><stop offset="1" stop-color="#d9b5cf"/></linearGradient><linearGradient id="studio-skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${tone}"/><stop offset="1" stop-color="#7e4b3a" stop-opacity=".3"/></linearGradient></defs>
+    <rect width="300" height="520" fill="url(#studio-bg)"/><circle cx="250" cy="74" r="88" fill="#fff" opacity=".28"/><path d="M0 434 Q150 390 300 434V520H0Z" fill="#5b385e" opacity=".16"/><rect x="24" y="24" width="252" height="472" rx="126" fill="none" stroke="#fff" stroke-width="2" opacity=".55"/>
+    <ellipse cx="150" cy="${ankleY + 15}" rx="${Math.round(a.hipW * .74)}" ry="12" fill="#55394c" opacity=".22"/>
+    <path d="M ${leftShoulder} ${shoulderY} Q ${leftShoulder - 13} ${waistY - 4} ${leftShoulder - 6} ${waistY + 40} L ${leftShoulder + 8} ${waistY + 40} Q ${leftShoulder + 5} ${waistY - 5} ${leftShoulder + 14} ${shoulderY + 8}Z" fill="url(#studio-skin)"/>
+    <path d="M ${rightShoulder} ${shoulderY} Q ${rightShoulder + 13} ${waistY - 4} ${rightShoulder + 6} ${waistY + 40} L ${rightShoulder - 8} ${waistY + 40} Q ${rightShoulder - 5} ${waistY - 5} ${rightShoulder - 14} ${shoulderY + 8}Z" fill="url(#studio-skin)"/>
+    <path d="M ${150 - a.hipW / 2} ${hipY} Q ${150 - 30} ${y(372)} ${126} ${ankleY} L 141 ${ankleY} Q 146 ${y(372)} 145 ${hipY + 16}Z M ${150 + a.hipW / 2} ${hipY} Q ${180} ${y(372)} ${174} ${ankleY} L 159 ${ankleY} Q 154 ${y(372)} 155 ${hipY + 16}Z" fill="url(#studio-skin)"/>
+    <path d="M ${leftShoulder} ${shoulderY} Q ${150 - a.waistW / 2 - 2} ${waistY - 2} ${150 - a.hipW / 2} ${hipY} L ${150 + a.hipW / 2} ${hipY} Q ${150 + a.waistW / 2 + 2} ${waistY - 2} ${rightShoulder} ${shoulderY}Z" fill="url(#studio-skin)"/>
+    <rect x="139" y="${y(58)}" width="22" height="18" rx="8" fill="url(#studio-skin)"/><circle cx="150" cy="${headY}" r="26" fill="url(#studio-skin)"/>
+    <path d="M134 ${headY - 3}Q140 ${headY - 6}145 ${headY - 3}M155 ${headY - 3}Q160 ${headY - 6}166 ${headY - 3}" fill="none" stroke="#3a2520" stroke-width="1.6" stroke-linecap="round" opacity=".65"/><ellipse cx="140" cy="${headY + 4}" rx="2.3" ry="2.8" fill="#30201c"/><ellipse cx="160" cy="${headY + 4}" rx="2.3" ry="2.8" fill="#30201c"/><path d="M143 ${headY + 19}Q150 ${headY + 23}157 ${headY + 19}" fill="none" stroke="#9b4f58" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M124 ${headY + 5}Q150 ${headY - 31}176 ${headY + 5}L176 ${headY - 3}Q150 ${headY - 24}124 ${headY - 3}Z" fill="${hair}"/>
+    <text x="150" y="476" text-anchor="middle" fill="#573e55" font-size="11" font-family="ui-sans-serif, sans-serif">ready for your first look</text>
   </svg>`;
 }
 

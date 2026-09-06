@@ -141,6 +141,22 @@ function hair(avatar, g) {
   }
 }
 
+/** A small amount of facial detail keeps the compositor fashion-led rather
+ * than mannequin-like, without pretending this is a photographic likeness. */
+function face(g) {
+  const cy = round(g.crownY + g.headR + 4);
+  const eyeY = round(cy - 2);
+  const browY = round(eyeY - 7);
+  const mouthY = round(cy + 13);
+  return [
+    `<path d="M ${CX - 16} ${browY} Q ${CX - 10} ${browY - 3} ${CX - 5} ${browY}" fill="none" stroke="#3a2520" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>`,
+    `<path d="M ${CX + 5} ${browY} Q ${CX + 10} ${browY - 3} ${CX + 16} ${browY}" fill="none" stroke="#3a2520" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>`,
+    `<ellipse cx="${CX - 10}" cy="${eyeY}" rx="2.3" ry="2.8" fill="#30201c"/><ellipse cx="${CX + 10}" cy="${eyeY}" rx="2.3" ry="2.8" fill="#30201c"/>`,
+    `<path d="M ${CX} ${round(eyeY + 2)} L ${CX - 2} ${round(cy + 7)} L ${CX + 2} ${round(cy + 7)}" fill="none" stroke="#805545" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>`,
+    `<path d="M ${CX - 7} ${mouthY} Q ${CX} ${round(mouthY + 4)} ${CX + 7} ${mouthY}" fill="none" stroke="#9b4f58" stroke-width="1.5" stroke-linecap="round"/>`
+  ].join('');
+}
+
 function circles(cy, r, color, count, spread) {
   return Array.from({ length: count }, (_, i) => {
     const angle = Math.PI + (Math.PI * i) / (count - 1);
@@ -216,6 +232,24 @@ function garmentShape(garment, g) {
   }
 }
 
+/** Construction lines give the garments a recognisable silhouette and prevent
+ * patterned fills from reading as flat blocks of colour. */
+function garmentDetails(garment, g) {
+  const line = 'rgba(35,24,35,.38)';
+  switch (garment.slot) {
+    case 'top':
+      return `<path d="M ${CX} ${round(g.shoulderY + 14)} V ${round(g.waistY + 22)} M ${round(CX - 15)} ${round(g.shoulderY - 2)} Q ${CX} ${round(g.shoulderY + 16)} ${round(CX + 15)} ${round(g.shoulderY - 2)}" fill="none" stroke="${line}" stroke-width="1.4"/><path d="M ${round(CX - g.ww / 2 - 7)} ${round(g.waistY + 22)} H ${round(CX + g.ww / 2 + 7)}" stroke="${line}" stroke-width="1.5"/>`;
+    case 'bottom':
+      return `<path d="M ${round(CX - g.ww / 2 - 4)} ${round(g.waistY + 8)} H ${round(CX + g.ww / 2 + 4)} M ${CX} ${round(g.hipY + 8)} V ${round(g.kneeY + 42)}" fill="none" stroke="${line}" stroke-width="1.5"/>`;
+    case 'dress':
+      return `<path d="M ${round(CX - g.ww / 2 - 4)} ${round(g.waistY + 3)} H ${round(CX + g.ww / 2 + 4)} M ${round(CX - 18)} ${round(g.hipY + 8)} L ${round(CX - 27)} ${round(g.kneeY + 22)} M ${round(CX + 18)} ${round(g.hipY + 8)} L ${round(CX + 27)} ${round(g.kneeY + 22)}" fill="none" stroke="${line}" stroke-width="1.4"/>`;
+    case 'outer':
+      return `<path d="M ${round(CX - g.sw / 2 - 5)} ${round(g.shoulderY)} L ${round(CX - 11)} ${round(g.shoulderY + 28)} L ${CX} ${round(g.shoulderY + 8)} L ${round(CX + 11)} ${round(g.shoulderY + 28)} L ${round(CX + g.sw / 2 + 5)} ${round(g.shoulderY)} M ${CX} ${round(g.shoulderY + 12)} V ${round(g.hipY + 36)}" fill="none" stroke="${line}" stroke-width="1.6"/>`;
+    default:
+      return '';
+  }
+}
+
 /**
  * Validates a garment set against the slot rules. A dress occupies the torso and
  * the legs at once, so it cannot coexist with a top or a bottom. Catching this
@@ -249,26 +283,26 @@ export const LocalCompositor = {
     const headCy = round(g.crownY + g.headR + 4);
 
     const body = [
-      `<path d="${armPath(g, 'left')}" fill="${skin}"/>`,
-      `<path d="${armPath(g, 'right')}" fill="${skin}"/>`,
-      `<path d="${legPath(g, 'left')}" fill="${skin}"/>`,
-      `<path d="${legPath(g, 'right')}" fill="${skin}"/>`,
-      `<path d="${torsoPath(g)}" fill="${skin}"/>`,
-      `<rect x="${round(CX - 11)}" y="${round(g.chinY - 8)}" width="22" height="18" rx="8" fill="${skin}"/>`,
-      `<circle cx="${CX}" cy="${headCy}" r="${g.headR}" fill="${skin}"/>`,
-      hair(avatar, g)
+      `<path d="${armPath(g, 'left')}" fill="url(#skin)" stroke="#4a3028" stroke-opacity=".14"/>`,
+      `<path d="${armPath(g, 'right')}" fill="url(#skin)" stroke="#4a3028" stroke-opacity=".14"/>`,
+      `<path d="${legPath(g, 'left')}" fill="url(#skin)" stroke="#4a3028" stroke-opacity=".14"/>`,
+      `<path d="${legPath(g, 'right')}" fill="url(#skin)" stroke="#4a3028" stroke-opacity=".14"/>`,
+      `<path d="${torsoPath(g)}" fill="url(#skin)" stroke="#4a3028" stroke-opacity=".14"/>`,
+      `<rect x="${round(CX - 11)}" y="${round(g.chinY - 8)}" width="22" height="18" rx="8" fill="url(#skin)"/>`,
+      `<circle cx="${CX}" cy="${headCy}" r="${g.headR}" fill="url(#skin)"/>`,
+      face(g), hair(avatar, g)
     ].join('');
 
-    const outfit = ordered.map((garment) => garmentShape(garment, g)).join('');
+    const outfit = ordered.map((garment) => `${garmentShape(garment, g)}${garmentDetails(garment, g)}`).join('');
 
     return {
       mime: 'image/svg+xml',
       provider: LocalCompositor.name,
       svg:
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CANVAS.width} ${CANVAS.height}" width="${CANVAS.width}" height="${CANVAS.height}" role="img" aria-label="${escapeXml(describe(avatar, ordered))}">` +
-        `<defs>${defs}<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1a22"/><stop offset="1" stop-color="#2a2733"/></linearGradient></defs>` +
-        `<rect width="${CANVAS.width}" height="${CANVAS.height}" fill="url(#bg)"/>` +
-        `<ellipse cx="${CX}" cy="${round(g.ankleY + 12)}" rx="${round(g.hw * 0.72)}" ry="9" fill="rgba(0,0,0,0.35)"/>` +
+        `<defs>${defs}<linearGradient id="bg" x1="0" y1="0" x2="0.9" y2="1"><stop offset="0" stop-color="#fff4e6"/><stop offset=".55" stop-color="#f5d5bd"/><stop offset="1" stop-color="#d9b5cf"/></linearGradient><linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${skin}"/><stop offset="1" stop-color="#7e4b3a" stop-opacity=".3"/></linearGradient><filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter></defs>` +
+        `<rect width="${CANVAS.width}" height="${CANVAS.height}" fill="url(#bg)"/><circle cx="250" cy="74" r="88" fill="#fff" opacity=".28"/><path d="M0 434 Q 150 390 300 434 V520 H0Z" fill="#5b385e" opacity=".16"/><rect x="24" y="24" width="252" height="472" rx="126" fill="none" stroke="#fff" stroke-width="2" opacity=".55"/>` +
+        `<ellipse cx="${CX}" cy="${round(g.ankleY + 15)}" rx="${round(g.hw * 0.74)}" ry="12" fill="#55394c" opacity=".22" filter="url(#soft-shadow)"/>` +
         `${body}${outfit}` +
         `</svg>`
     };

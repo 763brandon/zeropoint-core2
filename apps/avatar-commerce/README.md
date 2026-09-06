@@ -35,7 +35,7 @@ The demo drives a cohort through the same services the app uses — no direct
 inserts — so its metrics are the metrics the product would produce.
 
 ```
-npm test          # 79 tests: framework + app
+npm test          # framework + app tests
 ```
 
 Zero runtime dependencies. Node 22.5+ for `node:sqlite` and `node:test`.
@@ -72,6 +72,17 @@ tap, so it calls `POST /api/preview.svg`, which renders without persisting.
 Routing previews through look creation would emit a `core_action` per tap and
 inflate the activation numerator and the K denominator until the growth
 dashboard was fiction.
+
+### Milo, the in-app style companion
+
+Milo is a persistent, draggable style companion in the authenticated product
+shell. It is a deliberately bounded assistant: it can offer styling guidance
+and take the user to Studio or Boutique after an explicit click. It **cannot**
+control the operating system, open other applications, make purchases, or
+share looks. These limitations are shown in the companion itself and it can be
+disabled per device. This preserves user agency and matches the product’s
+commerce scope; any future delegated action would need a separately designed,
+authenticated permission flow.
 
 ---
 
