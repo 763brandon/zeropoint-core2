@@ -122,6 +122,20 @@ describe('try-on compositor', () => {
     assert.ok(LocalCompositor.render(avatar, []).svg.includes('<svg'));
   });
 
+  test('renders a polished illustrated avatar with facial detail and an editorial backdrop', () => {
+    const { svg } = LocalCompositor.render(avatar, [top]);
+    assert.match(svg, /aria-label="Avatar A wearing Top"/);
+    assert.match(svg, /linearGradient id="bg"/);
+    assert.match(svg, /<ellipse cx="140"[^>]*fill="#30201c"/);
+    assert.match(svg, /<rect x="24" y="24" width="252"/);
+  });
+
+  test('adds garment construction details without changing deterministic layering', () => {
+    const { svg } = LocalCompositor.render(avatar, [top, bottom]);
+    assert.match(svg, /stroke="rgba\(35,24,35,.38\)"/);
+    assert.ok(svg.indexOf('p-g2') < svg.indexOf('p-g1'), 'bottom remains behind top');
+  });
+
   test('a dress cannot be layered with a top or a bottom', () => {
     const dress = { id: 'g3', name: 'Dress', slot: 'dress', color: '#000000', accent: '#ffffff', pattern: 'solid' };
     assert.throws(() => validateOutfit([dress, top]), RenderError);

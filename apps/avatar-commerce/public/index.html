@@ -140,6 +140,32 @@
   </section>
 </div>
 
+<!-- The companion is deliberately scoped to this product. It can guide and
+     navigate the commerce experience, but it never receives device or other
+     application control. -->
+<aside id="style-companion" class="style-companion" hidden aria-label="Milo, your style companion">
+  <button id="companion-orb" class="companion-orb" type="button" aria-expanded="false" aria-controls="companion-card" title="Open Milo, your style companion">
+    <span class="companion-spark" aria-hidden="true">✦</span>
+    <span class="companion-pet" aria-hidden="true"></span>
+    <span class="sr-only">Open style companion</span>
+  </button>
+  <section id="companion-card" class="companion-card" hidden aria-live="polite">
+    <div class="companion-head"><span class="companion-pet small" aria-hidden="true"></span><div><strong>Milo</strong><span>your in-app style copilot</span></div><button id="companion-close" class="icon-button" type="button" aria-label="Minimize Milo">×</button></div>
+    <p id="companion-message">I’ll keep your look together while you browse.</p>
+    <div class="companion-actions">
+      <button type="button" data-companion-action="boutique">Find a piece</button>
+      <button type="button" data-companion-action="studio">Tune my avatar</button>
+    </div>
+    <details class="companion-permissions">
+      <summary>What Milo can do</summary>
+      <p><strong>Allowed:</strong> suggest looks and navigate this app when you ask.</p>
+      <p><strong>Never allowed:</strong> access other apps, make purchases, or share a look without a separate, explicit action from you.</p>
+      <label class="toggle-row"><input id="companion-proactive" type="checkbox"> Offer tips while I browse</label>
+      <button id="companion-disable" class="text-button" type="button">Disable Milo on this device</button>
+    </details>
+  </section>
+</aside>
+
 <script type="module" src="/app.js"></script>
 </body>
 </html>
